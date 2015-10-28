@@ -15,12 +15,13 @@ public class SharingTable {
 
     public static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
-                + " label           TEXT NOT NULL COLLATE NOCASE,"
+                + " name            TEXT NOT NULL COLLATE NOCASE,"
+                + " label           TEXT NOT NULL,"
                 + " description     TEXT NOT NULL,"
                 + "	noticon		    TEXT NOT NULL,"
                 + " icon_url        TEXT NOT NULL,"
                 + "	connect_url	    TEXT NOT NULL,"
-                + " PRIMARY KEY (label))");
+                + " PRIMARY KEY (name))");
     }
 
     private static SQLiteDatabase getReadableDb() {
@@ -32,10 +33,11 @@ public class SharingTable {
 
     public static SharingServiceList getServiceList() {
         SharingServiceList serviceList = new SharingServiceList();
-        Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY label", null);
+        Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY name", null);
         try {
             while (c.moveToNext()) {
                 SharingService service = new SharingService();
+                service.setName(c.getString(c.getColumnIndex("name")));
                 service.setLabel(c.getString(c.getColumnIndex("label")));
                 service.setDescription(c.getString(c.getColumnIndex("description")));
                 service.setNoticon(c.getString(c.getColumnIndex("noticon")));
@@ -56,15 +58,17 @@ public class SharingTable {
         try {
             db.delete(SERVICES_TABLE, null, null);
 
-            stmt = db.compileStatement("INSERT INTO " + SERVICES_TABLE
-                    + " (label, description, noticon, icon_url, connect_url)"
-                    + " VALUES (?1, ?2, ?3, ?4, ?5)");
+            stmt = db.compileStatement(
+                    "INSERT INTO " + SERVICES_TABLE
+                    + " (name, label, description, noticon, icon_url, connect_url)"
+                    + " VALUES (?1, ?2, ?3, ?4, ?5, ?6)");
             for (SharingService service : serviceList) {
-                stmt.bindString(1, service.getLabel());
-                stmt.bindString(2, service.getDescription());
-                stmt.bindString(3, service.getNoticon());
-                stmt.bindString(4, service.getIconUrl());
-                stmt.bindString(5, service.getConnectUrl());
+                stmt.bindString(1, service.getName());
+                stmt.bindString(2, service.getLabel());
+                stmt.bindString(3, service.getDescription());
+                stmt.bindString(4, service.getNoticon());
+                stmt.bindString(5, service.getIconUrl());
+                stmt.bindString(6, service.getConnectUrl());
                 stmt.executeInsert();
             }
 

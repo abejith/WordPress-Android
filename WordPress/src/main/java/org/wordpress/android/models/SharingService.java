@@ -3,11 +3,19 @@ package org.wordpress.android.models;
 import org.wordpress.android.util.StringUtils;
 
 public class SharingService {
+    private String mName;
     private String mLabel;
     private String mDescription;
     private String mNoticon;
     private String mIconUrl;
     private String mConnectUrl;
+
+    public String getName() {
+        return StringUtils.notNullStr(mName);
+    }
+    public void setName(String name) {
+        mName = StringUtils.notNullStr(name);
+    }
 
     public String getLabel() {
         return StringUtils.notNullStr(mLabel);
@@ -46,6 +54,7 @@ public class SharingService {
 
     public boolean isSameAs(SharingService other) {
         return other != null
+                && other.getName().equals(this.getName())
                 && other.getLabel().equals(this.getLabel())
                 && other.getDescription().equals(this.getDescription())
                 && other.getNoticon().equals(this.getNoticon())
