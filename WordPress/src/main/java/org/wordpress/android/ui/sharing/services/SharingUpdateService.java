@@ -74,6 +74,8 @@ public class SharingUpdateService extends Service {
     }
 
     private void handleResponse(final JSONObject json) {
+        if (json == null) return;
+
         new Thread() {
             @Override
             public void run() {

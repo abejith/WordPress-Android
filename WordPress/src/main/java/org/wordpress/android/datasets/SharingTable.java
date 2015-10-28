@@ -13,6 +13,7 @@ import org.wordpress.android.models.SharingServiceList;
 public class SharingTable {
     private static final String SERVICES_TABLE = "tbl_sharing_services";
 
+    // TODO: call createTables() when sharing is first accessed
     public static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
                 + " name            TEXT NOT NULL COLLATE NOCASE,"

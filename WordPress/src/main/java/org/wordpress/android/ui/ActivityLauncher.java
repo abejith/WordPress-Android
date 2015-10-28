@@ -28,6 +28,7 @@ import org.wordpress.android.ui.posts.PostsListActivity;
 import org.wordpress.android.ui.prefs.BlogPreferencesActivity;
 import org.wordpress.android.ui.prefs.SettingsActivity;
 import org.wordpress.android.ui.prefs.notifications.NotificationsSettingsActivity;
+import org.wordpress.android.ui.sharing.SharingListActivity;
 import org.wordpress.android.ui.stats.StatsActivity;
 import org.wordpress.android.ui.stats.StatsConstants;
 import org.wordpress.android.ui.stats.StatsSingleItemDetailsActivity;
@@ -184,6 +185,11 @@ public class ActivityLauncher {
     public static void viewHelpAndSupport(Context context, Tag origin) {
         Intent intent = new Intent(context, HelpActivity.class);
         intent.putExtra(HelpshiftHelper.ORIGIN_KEY, origin);
+        slideInFromRight(context, intent);
+    }
+
+    public static void viewSharingList(Context context) {
+        Intent intent = new Intent(context, SharingListActivity.class);
         slideInFromRight(context, intent);
     }
 

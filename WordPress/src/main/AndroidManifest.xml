@@ -255,6 +255,10 @@
             android:theme="@style/ReaderPhotoViewerTheme" />
 
         <!-- Other activities -->
+        <activity
+            android:name=".ui.sharing.SharingListActivity"
+            android:label="@string/sharing"
+            android:theme="@style/Calypso.NoActionBar"/>
 
         <activity android:name=".ui.ShareIntentReceiverActivity" android:theme="@style/Calypso.FloatingActivity">
             <intent-filter>
@@ -312,6 +316,10 @@
         <service
             android:name=".ui.posts.services.PostUpdateService"
             android:label="Post Update Service"
+            android:exported="false" />
+        <service
+            android:name=".ui.sharing.services.SharingUpdateService"
+            android:label="Sharing Update Service"
             android:exported="false" />
 
         <service
