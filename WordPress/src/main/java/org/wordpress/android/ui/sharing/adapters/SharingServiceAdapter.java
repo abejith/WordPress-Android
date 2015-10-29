@@ -59,6 +59,13 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
         holder.txtLabel.setText(service.getLabel());
         holder.txtDescription.setText(service.getDescription());
         holder.imgIcon.setImageUrl(service.getIconUrl(), WPNetworkImageView.ImageType.BLAVATAR);
+
+        holder.btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO
+            }
+        });
     }
 
     class SharingViewHolder extends RecyclerView.ViewHolder {
