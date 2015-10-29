@@ -12,6 +12,7 @@ import org.wordpress.android.R;
 import org.wordpress.android.datasets.SharingTable;
 import org.wordpress.android.models.SharingService;
 import org.wordpress.android.models.SharingServiceList;
+import org.wordpress.android.ui.sharing.ShareConnectButton;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.widgets.WPNetworkImageView;
@@ -63,12 +64,14 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
     class SharingViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtLabel;
         private final TextView txtDescription;
+        private final ShareConnectButton btnConnect;
         private final WPNetworkImageView imgIcon;
 
         public SharingViewHolder(View view) {
             super(view);
             txtLabel = (TextView) view.findViewById(R.id.text_label);
             txtDescription = (TextView) view.findViewById(R.id.text_description);
+            btnConnect = (ShareConnectButton) view.findViewById(R.id.button_connect);
             imgIcon = (WPNetworkImageView) view.findViewById(R.id.image_icon);
         }
     }
