@@ -1,4 +1,4 @@
-package org.wordpress.android.ui.sharing;
+package org.wordpress.android.ui.publicize;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * Connect/disconnect/reconnect button used in sharing list
  */
-public class ShareConnectButton extends WPTextView {
+public class ConnectButton extends WPTextView {
 
     public enum ConnectState {
         CONNECT,
@@ -33,17 +33,17 @@ public class ShareConnectButton extends WPTextView {
     private int mPaddingHorz;
     private int mPaddingVert;
 
-    public ShareConnectButton(Context context){
+    public ConnectButton(Context context){
         super(context);
         initView(context);
     }
 
-    public ShareConnectButton(Context context, AttributeSet attrs) {
+    public ConnectButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
     }
 
-    public ShareConnectButton(Context context, AttributeSet attrs, int defStyle) {
+    public ConnectButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView(context);
     }

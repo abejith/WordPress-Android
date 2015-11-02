@@ -256,7 +256,7 @@
 
         <!-- Other activities -->
         <activity
-            android:name=".ui.sharing.SharingListActivity"
+            android:name=".ui.publicize.PublicizeListActivity"
             android:label="@string/sharing"
             android:theme="@style/Calypso.NoActionBar"/>
 
@@ -318,7 +318,7 @@
             android:label="Post Update Service"
             android:exported="false" />
         <service
-            android:name=".ui.sharing.services.SharingUpdateService"
+            android:name=".ui.publicize.services.PublicizeUpdateService"
             android:label="Sharing Update Service"
             android:exported="false" />
 

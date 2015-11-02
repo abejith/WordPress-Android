@@ -5,9 +5,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class SharingServiceList extends ArrayList<SharingService> {
+public class PublicizeServiceList extends ArrayList<PublicizeService> {
 
-    private int indexOfService(SharingService service) {
+    private int indexOfService(PublicizeService service) {
         if (service == null) return -1;
 
         for (int i = 0; i < this.size(); i++) {
@@ -19,12 +19,12 @@ public class SharingServiceList extends ArrayList<SharingService> {
         return -1;
     }
 
-    public boolean isSameList(SharingServiceList otherList) {
+    public boolean isSameList(PublicizeServiceList otherList) {
         if (otherList == null || otherList.size() != this.size()) {
             return false;
         }
 
-        for (SharingService otherService: otherList) {
+        for (PublicizeService otherService: otherList) {
             int i = this.indexOfService(otherService);
             if (i == -1) {
                 return false;
@@ -48,8 +48,8 @@ public class SharingServiceList extends ArrayList<SharingService> {
 		},
 		...
      */
-    public static SharingServiceList fromJson(JSONObject json) {
-        SharingServiceList serviceList = new SharingServiceList();
+    public static PublicizeServiceList fromJson(JSONObject json) {
+        PublicizeServiceList serviceList = new PublicizeServiceList();
         if (json == null) return serviceList;
 
         JSONObject jsonServiceList = json.optJSONObject("services");
@@ -60,7 +60,7 @@ public class SharingServiceList extends ArrayList<SharingService> {
             String serviceName = it.next();
             JSONObject jsonService = jsonServiceList.optJSONObject(serviceName);
 
-            SharingService service = new SharingService();
+            PublicizeService service = new PublicizeService();
             service.setName(serviceName);
             service.setLabel(jsonService.optString("label"));
             service.setDescription(jsonService.optString("description"));

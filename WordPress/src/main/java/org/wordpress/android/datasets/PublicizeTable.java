@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteStatement;
 import com.automattic.android.tracks.datasets.SqlUtils;
 
 import org.wordpress.android.WordPress;
-import org.wordpress.android.models.SharingService;
-import org.wordpress.android.models.SharingServiceList;
+import org.wordpress.android.models.PublicizeService;
+import org.wordpress.android.models.PublicizeServiceList;
 
-public class SharingTable {
-    private static final String SERVICES_TABLE = "tbl_sharing_services";
+public class PublicizeTable {
+    private static final String SERVICES_TABLE = "tbl_publicize_services";
 
     private static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
@@ -40,14 +40,14 @@ public class SharingTable {
         }
     }
 
-    public static SharingServiceList getServiceList() {
+    public static PublicizeServiceList getServiceList() {
         ensureTablesExist();
 
-        SharingServiceList serviceList = new SharingServiceList();
+        PublicizeServiceList serviceList = new PublicizeServiceList();
         Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY name", null);
         try {
             while (c.moveToNext()) {
-                SharingService service = new SharingService();
+                PublicizeService service = new PublicizeService();
                 service.setName(c.getString(c.getColumnIndex("name")));
                 service.setLabel(c.getString(c.getColumnIndex("label")));
                 service.setDescription(c.getString(c.getColumnIndex("description")));
@@ -62,7 +62,7 @@ public class SharingTable {
         }
     }
 
-    public static void setServiceList(final SharingServiceList serviceList) {
+    public static void setServiceList(final PublicizeServiceList serviceList) {
         ensureTablesExist();
 
         SQLiteStatement stmt = null;
@@ -75,7 +75,7 @@ public class SharingTable {
                     "INSERT INTO " + SERVICES_TABLE
                     + " (name, label, description, noticon, icon_url, connect_url)"
                     + " VALUES (?1, ?2, ?3, ?4, ?5, ?6)");
-            for (SharingService service : serviceList) {
+            for (PublicizeService service : serviceList) {
                 stmt.bindString(1, service.getName());
                 stmt.bindString(2, service.getLabel());
                 stmt.bindString(3, service.getDescription());

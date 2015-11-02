@@ -1,4 +1,4 @@
-package org.wordpress.android.ui.sharing;
+package org.wordpress.android.ui.publicize;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -8,22 +8,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.wordpress.android.R;
-import org.wordpress.android.ui.reader.SharingEvents;
-import org.wordpress.android.ui.sharing.adapters.SharingServiceAdapter;
-import org.wordpress.android.ui.sharing.services.SharingUpdateService;
+import org.wordpress.android.ui.publicize.adapters.PublicizeServiceAdapter;
+import org.wordpress.android.ui.publicize.services.PublicizeUpdateService;
+import org.wordpress.android.ui.reader.PublicizeEvents;
 
 /**
  *
  */
-public class SharingListActivity extends AppCompatActivity {
+public class PublicizeListActivity extends AppCompatActivity {
 
-    private SharingServiceAdapter mAdapter;
+    private PublicizeServiceAdapter mAdapter;
     private RecyclerView mRecycler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sharing_list_activity);
+        setContentView(R.layout.publicize_list_activity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -35,12 +35,12 @@ public class SharingListActivity extends AppCompatActivity {
         }
 
         mRecycler = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new SharingServiceAdapter(this);
+        mAdapter = new PublicizeServiceAdapter(this);
         mRecycler.setAdapter(mAdapter);
         mAdapter.refresh();
 
         if (savedInstanceState == null) {
-            SharingUpdateService.startService(this);
+            PublicizeUpdateService.updatePublicizeServices(this);
         }
     }
 
@@ -55,7 +55,7 @@ public class SharingListActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(SharingEvents.SharingServicesChanged event) {
+    public void onEventMainThread(PublicizeEvents.PublicizeServicesChanged event) {
         if (!isFinishing()) {
             mAdapter.refresh();
         }

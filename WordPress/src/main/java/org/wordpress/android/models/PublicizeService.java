@@ -2,7 +2,7 @@ package org.wordpress.android.models;
 
 import org.wordpress.android.util.StringUtils;
 
-public class SharingService {
+public class PublicizeService {
     private String mName;
     private String mLabel;
     private String mDescription;
@@ -52,7 +52,7 @@ public class SharingService {
         mConnectUrl = StringUtils.notNullStr(url);
     }
 
-    public boolean isSameAs(SharingService other) {
+    public boolean isSameAs(PublicizeService other) {
         return other != null
                 && other.getName().equals(this.getName())
                 && other.getLabel().equals(this.getLabel())

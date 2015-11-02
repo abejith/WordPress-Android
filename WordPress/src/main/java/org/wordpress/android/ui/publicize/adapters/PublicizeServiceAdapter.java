@@ -1,4 +1,4 @@
-package org.wordpress.android.ui.sharing.adapters;
+package org.wordpress.android.ui.publicize.adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -9,18 +9,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.wordpress.android.R;
-import org.wordpress.android.datasets.SharingTable;
-import org.wordpress.android.models.SharingService;
-import org.wordpress.android.models.SharingServiceList;
-import org.wordpress.android.ui.sharing.ShareConnectButton;
+import org.wordpress.android.datasets.PublicizeTable;
+import org.wordpress.android.models.PublicizeService;
+import org.wordpress.android.models.PublicizeServiceList;
+import org.wordpress.android.ui.publicize.ConnectButton;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.widgets.WPNetworkImageView;
 
-public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAdapter.SharingViewHolder> {
-    private final SharingServiceList mServices = new SharingServiceList();
+public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServiceAdapter.SharingViewHolder> {
+    private final PublicizeServiceList mServices = new PublicizeServiceList();
 
-    public SharingServiceAdapter(Context context) {
+    public PublicizeServiceAdapter(Context context) {
         super();
         setHasStableIds(true);
     }
@@ -49,13 +49,13 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
 
     @Override
     public SharingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.sharing_listitem_service, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.publicize_listitem, parent, false);
         return new SharingViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(SharingViewHolder holder, int position) {
-        final SharingService service = mServices.get(position);
+        final PublicizeService service = mServices.get(position);
         holder.txtLabel.setText(service.getLabel());
         holder.txtDescription.setText(service.getDescription());
         holder.imgIcon.setImageUrl(service.getIconUrl(), WPNetworkImageView.ImageType.BLAVATAR);
@@ -71,14 +71,14 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
     class SharingViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtLabel;
         private final TextView txtDescription;
-        private final ShareConnectButton btnConnect;
+        private final ConnectButton btnConnect;
         private final WPNetworkImageView imgIcon;
 
         public SharingViewHolder(View view) {
             super(view);
             txtLabel = (TextView) view.findViewById(R.id.text_label);
             txtDescription = (TextView) view.findViewById(R.id.text_description);
-            btnConnect = (ShareConnectButton) view.findViewById(R.id.button_connect);
+            btnConnect = (ConnectButton) view.findViewById(R.id.button_connect);
             imgIcon = (WPNetworkImageView) view.findViewById(R.id.image_icon);
         }
     }
@@ -87,7 +87,7 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
      * AsyncTask to load services
      */
     private boolean mIsTaskRunning = false;
-    private class LoadTagsTask extends AsyncTask<Void, Void, SharingServiceList> {
+    private class LoadTagsTask extends AsyncTask<Void, Void, PublicizeServiceList> {
         @Override
         protected void onPreExecute() {
             mIsTaskRunning = true;
@@ -97,11 +97,11 @@ public class SharingServiceAdapter extends RecyclerView.Adapter<SharingServiceAd
             mIsTaskRunning = false;
         }
         @Override
-        protected SharingServiceList doInBackground(Void... params) {
-            return SharingTable.getServiceList();
+        protected PublicizeServiceList doInBackground(Void... params) {
+            return PublicizeTable.getServiceList();
         }
         @Override
-        protected void onPostExecute(SharingServiceList serviceList) {
+        protected void onPostExecute(PublicizeServiceList serviceList) {
             if (serviceList != null && !serviceList.isSameList(mServices)) {
                 mServices.clear();
                 mServices.addAll(serviceList);
