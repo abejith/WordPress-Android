@@ -1027,6 +1027,7 @@
     <string name="my_site_btn_switch_site">Switch Site</string>
     <string name="my_site_btn_view_admin">View Admin</string>
     <string name="my_site_btn_view_site">View Site</string>
+    <string name="my_site_btn_sharing">Sharing</string>
     <string name="my_site_no_sites_view_drake">Illustration</string>
     <string name="my_site_no_sites_view_title">You don\'t have any WordPress sites yet.</string>
     <string name="my_site_no_sites_view_subtitle">Would you like to add one?</string>
@@ -1062,6 +1063,12 @@
 
     <string name="date_range_start_date">Start Date</string>
     <string name="date_range_end_date">End Date</string>
+
+    <!-- Sharing -->
+    <string name="sharing">Sharing</string>
+    <string name="share_btn_connect">Connect</string>
+    <string name="share_btn_disconnect">Disconnect</string>
+    <string name="share_btn_reconnect">Reconnect</string>
 
     <!-- Special characters -->
     <string name="bullet" translatable="false">\u2022</string>
