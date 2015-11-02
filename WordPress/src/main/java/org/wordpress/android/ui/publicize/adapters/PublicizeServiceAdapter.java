@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import org.wordpress.android.R;
 import org.wordpress.android.datasets.PublicizeTable;
+import org.wordpress.android.models.PublicizeConnection;
+import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeService;
 import org.wordpress.android.models.PublicizeServiceList;
 import org.wordpress.android.ui.publicize.ConnectButton;
@@ -19,9 +21,12 @@ import org.wordpress.android.widgets.WPNetworkImageView;
 
 public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServiceAdapter.SharingViewHolder> {
     private final PublicizeServiceList mServices = new PublicizeServiceList();
+    private final PublicizeConnectionList mConnections = new PublicizeConnectionList();
+    private final int mRemoteBlogId;
 
-    public PublicizeServiceAdapter(Context context) {
+    public PublicizeServiceAdapter(Context context, int remoteBlogId) {
         super();
+        mRemoteBlogId = remoteBlogId;
         setHasStableIds(true);
     }
 
@@ -56,16 +61,27 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
     @Override
     public void onBindViewHolder(SharingViewHolder holder, int position) {
         final PublicizeService service = mServices.get(position);
+
         holder.txtLabel.setText(service.getLabel());
         holder.txtDescription.setText(service.getDescription());
         holder.imgIcon.setImageUrl(service.getIconUrl(), WPNetworkImageView.ImageType.BLAVATAR);
 
+        holder.btnConnect.setConnectState(isServiceConnected(service) ? ConnectButton.ConnectState.DISCONNECT : ConnectButton.ConnectState.CONNECT);
         holder.btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO
             }
         });
+    }
+
+    private boolean isServiceConnected(PublicizeService service) {
+        for (PublicizeConnection connection: mConnections) {
+            if (connection.getService().equals(service.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     class SharingViewHolder extends RecyclerView.ViewHolder {
@@ -87,7 +103,10 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
      * AsyncTask to load services
      */
     private boolean mIsTaskRunning = false;
-    private class LoadTagsTask extends AsyncTask<Void, Void, PublicizeServiceList> {
+    private class LoadTagsTask extends AsyncTask<Void, Void, Boolean> {
+        private PublicizeServiceList tmpServices;
+        private PublicizeConnectionList tmpConnections;
+
         @Override
         protected void onPreExecute() {
             mIsTaskRunning = true;
@@ -97,14 +116,18 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             mIsTaskRunning = false;
         }
         @Override
-        protected PublicizeServiceList doInBackground(Void... params) {
-            return PublicizeTable.getServiceList();
+        protected Boolean doInBackground(Void... params) {
+            tmpServices = PublicizeTable.getServiceList();
+            tmpConnections = PublicizeTable.getConnectionsForSite(mRemoteBlogId);
+            return !(tmpServices.isSameAs(mServices) && tmpConnections.isSameAs(mConnections));
         }
         @Override
-        protected void onPostExecute(PublicizeServiceList serviceList) {
-            if (serviceList != null && !serviceList.isSameList(mServices)) {
+        protected void onPostExecute(Boolean result) {
+            if (result) {
                 mServices.clear();
-                mServices.addAll(serviceList);
+                mServices.addAll(tmpServices);
+                mConnections.clear();
+                mConnections.addAll(tmpConnections);
                 notifyDataSetChanged();
             }
             mIsTaskRunning = false;

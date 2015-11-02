@@ -19,7 +19,7 @@ public class PublicizeServiceList extends ArrayList<PublicizeService> {
         return -1;
     }
 
-    public boolean isSameList(PublicizeServiceList otherList) {
+    public boolean isSameAs(PublicizeServiceList otherList) {
         if (otherList == null || otherList.size() != this.size()) {
             return false;
         }

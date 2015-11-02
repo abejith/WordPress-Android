@@ -188,8 +188,11 @@ public class ActivityLauncher {
         slideInFromRight(context, intent);
     }
 
-    public static void viewSharingList(Context context) {
+    public static void viewPublicizeList(Context context, Blog blog) {
+        if (blog == null) return;
+
         Intent intent = new Intent(context, PublicizeListActivity.class);
+        intent.putExtra(PublicizeListActivity.ARG_REMOTE_BLOG_ID, blog.getRemoteBlogId());
         slideInFromRight(context, intent);
     }
 

@@ -191,7 +191,7 @@ public class MySiteFragment extends Fragment
         mSharingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityLauncher.viewSharingList(getActivity());
+                ActivityLauncher.viewPublicizeList(getActivity(), mBlog);
             }
         });
 

@@ -7,4 +7,6 @@ public class PublicizeEvents {
 
     public static class PublicizeServicesChanged {}
 
+    public static class PublicizeConnectionsChanged {}
+
 }

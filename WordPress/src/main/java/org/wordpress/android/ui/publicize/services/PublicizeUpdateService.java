@@ -11,6 +11,7 @@ import com.wordpress.rest.RestRequest;
 import org.json.JSONObject;
 import org.wordpress.android.WordPress;
 import org.wordpress.android.datasets.PublicizeTable;
+import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeServiceList;
 import org.wordpress.android.ui.reader.PublicizeEvents;
 import org.wordpress.android.util.AppLog;
@@ -23,8 +24,16 @@ import de.greenrobot.event.EventBus;
 
 public class PublicizeUpdateService extends Service {
 
+    private static final String ARG_REMOTE_BLOG_ID = "blog_id";
+
     public static void updatePublicizeServices(Context context) {
         Intent intent = new Intent(context, PublicizeUpdateService.class);
+        context.startService(intent);
+    }
+
+    public static void updateConnectionsForBlog(Context context, int remoteBlogId) {
+        Intent intent = new Intent(context, PublicizeUpdateService.class);
+        intent.putExtra(ARG_REMOTE_BLOG_ID, remoteBlogId);
         context.startService(intent);
     }
 
@@ -51,16 +60,26 @@ public class PublicizeUpdateService extends Service {
             return START_NOT_STICKY;
         }
 
-        updateServices();
+        // if a blogId is passed we're updating connections for that blog, otherwise we're updating
+        // the list of known publicize services
+        if (intent.hasExtra(ARG_REMOTE_BLOG_ID)) {
+            int remoteBlogId = intent.getIntExtra(ARG_REMOTE_BLOG_ID, 0);
+            updateConnections(remoteBlogId);
+        } else {
+            updateServices();
+        }
 
         return START_NOT_STICKY;
     }
 
+    /*
+     * update the list of publicize services
+     */
     private void updateServices() {
         com.wordpress.rest.RestRequest.Listener listener = new RestRequest.Listener() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                handleResponse(jsonObject);
+                handleUpdateServicesResponse(jsonObject);
             }
         };
         RestRequest.ErrorListener errorListener = new RestRequest.ErrorListener() {
@@ -73,7 +92,7 @@ public class PublicizeUpdateService extends Service {
         WordPress.getRestClientUtilsV1_1().get("meta/publicize/", null, null, listener, errorListener);
     }
 
-    private void handleResponse(final JSONObject json) {
+    private void handleUpdateServicesResponse(final JSONObject json) {
         if (json == null) return;
 
         new Thread() {
@@ -81,10 +100,46 @@ public class PublicizeUpdateService extends Service {
             public void run() {
                 PublicizeServiceList serverList = PublicizeServiceList.fromJson(json);
                 PublicizeServiceList localList = PublicizeTable.getServiceList();
-                if (!serverList.isSameList(localList)) {
-                    AppLog.d(AppLog.T.SHARING, "publicize update service > services changed");
+                if (!serverList.isSameAs(localList)) {
                     PublicizeTable.setServiceList(serverList);
                     EventBus.getDefault().post(new PublicizeEvents.PublicizeServicesChanged());
+                }
+            }
+        }.start();
+    }
+
+    /*
+     * update the connections for the passed blog
+     */
+    private void updateConnections(final int remoteBlogId) {
+        com.wordpress.rest.RestRequest.Listener listener = new RestRequest.Listener() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                handleUpdateConnectionsResponse(remoteBlogId, jsonObject);
+            }
+        };
+        RestRequest.ErrorListener errorListener = new RestRequest.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                AppLog.e(AppLog.T.SHARING, volleyError);
+            }
+        };
+
+        String path = String.format("sites/%d/publicize-connections", remoteBlogId);
+        WordPress.getRestClientUtilsV1_1().get(path, null, null, listener, errorListener);
+    }
+
+    private void handleUpdateConnectionsResponse(final int remoteBlogId, final JSONObject json) {
+        if (json == null) return;
+
+        new Thread() {
+            @Override
+            public void run() {
+                PublicizeConnectionList serverList = PublicizeConnectionList.fromJson(json);
+                PublicizeConnectionList localList = PublicizeTable.getConnectionsForSite(remoteBlogId);
+                if (!serverList.isSameAs(localList)) {
+                    PublicizeTable.setConnectionsForSite(remoteBlogId, serverList);
+                    EventBus.getDefault().post(new PublicizeEvents.PublicizeConnectionsChanged());
                 }
             }
         }.start();
