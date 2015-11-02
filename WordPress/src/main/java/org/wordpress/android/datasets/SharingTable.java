@@ -13,8 +13,7 @@ import org.wordpress.android.models.SharingServiceList;
 public class SharingTable {
     private static final String SERVICES_TABLE = "tbl_sharing_services";
 
-    // TODO: call createTables() when sharing is first accessed
-    public static void createTables(SQLiteDatabase db) {
+    private static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
                 + " name            TEXT NOT NULL COLLATE NOCASE,"
                 + " label           TEXT NOT NULL,"
@@ -28,11 +27,22 @@ public class SharingTable {
     private static SQLiteDatabase getReadableDb() {
         return WordPress.wpDB.getDatabase();
     }
+
     private static SQLiteDatabase getWritableDb() {
         return WordPress.wpDB.getDatabase();
     }
 
+    private static boolean mCreatedTables;
+    private static void ensureTablesExist() {
+        if (!mCreatedTables) {
+            createTables(getWritableDb());
+            mCreatedTables = true;
+        }
+    }
+
     public static SharingServiceList getServiceList() {
+        ensureTablesExist();
+
         SharingServiceList serviceList = new SharingServiceList();
         Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY name", null);
         try {
@@ -53,6 +63,8 @@ public class SharingTable {
     }
 
     public static void setServiceList(final SharingServiceList serviceList) {
+        ensureTablesExist();
+
         SQLiteStatement stmt = null;
         SQLiteDatabase db = getWritableDb();
         db.beginTransaction();
