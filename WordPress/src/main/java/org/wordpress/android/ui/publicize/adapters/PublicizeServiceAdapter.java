@@ -19,14 +19,17 @@ import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.widgets.WPNetworkImageView;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServiceAdapter.SharingViewHolder> {
     private final PublicizeServiceList mServices = new PublicizeServiceList();
     private final PublicizeConnectionList mConnections = new PublicizeConnectionList();
-    private final int mRemoteBlogId;
+    private final int mSiteId;
 
-    public PublicizeServiceAdapter(Context context, int remoteBlogId) {
+    public PublicizeServiceAdapter(Context context, int siteId) {
         super();
-        mRemoteBlogId = remoteBlogId;
+        mSiteId = siteId;
         setHasStableIds(true);
     }
 
@@ -77,7 +80,7 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
 
     private boolean isServiceConnected(PublicizeService service) {
         for (PublicizeConnection connection: mConnections) {
-            if (connection.getService().equals(service.getName())) {
+            if (connection.getService().equalsIgnoreCase(service.getName())) {
                 return true;
             }
         }
@@ -118,7 +121,7 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
         @Override
         protected Boolean doInBackground(Void... params) {
             tmpServices = PublicizeTable.getServiceList();
-            tmpConnections = PublicizeTable.getConnectionsForSite(mRemoteBlogId);
+            tmpConnections = PublicizeTable.getConnectionsForSite(mSiteId);
             return !(tmpServices.isSameAs(mServices) && tmpConnections.isSameAs(mConnections));
         }
         @Override
@@ -126,11 +129,34 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             if (result) {
                 mServices.clear();
                 mServices.addAll(tmpServices);
+
                 mConnections.clear();
                 mConnections.addAll(tmpConnections);
+                sortConnections();
+
                 notifyDataSetChanged();
             }
             mIsTaskRunning = false;
+        }
+
+        /*
+         * sort connected services to the top
+         */
+        private void sortConnections() {
+            Collections.sort(mServices, new Comparator<PublicizeService>() {
+                @Override
+                public int compare(PublicizeService lhs, PublicizeService rhs) {
+                    boolean isLhsConnected = isServiceConnected(lhs);
+                    boolean isRhsConnected = isServiceConnected(rhs);
+                    if (isLhsConnected && !isRhsConnected) {
+                        return -1;
+                    } else if (isRhsConnected && !isLhsConnected) {
+                        return 1;
+                    } else {
+                        return lhs.getLabel().compareToIgnoreCase(rhs.getLabel());
+                    }
+                }
+            });
         }
     }
 

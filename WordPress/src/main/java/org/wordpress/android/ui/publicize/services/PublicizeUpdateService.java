@@ -24,16 +24,15 @@ import de.greenrobot.event.EventBus;
 
 public class PublicizeUpdateService extends Service {
 
-    private static final String ARG_REMOTE_BLOG_ID = "blog_id";
+    private static final String ARG_SITE_ID = "site_id";
+    private static boolean mHasUpdatedServices;
 
-    public static void updatePublicizeServices(Context context) {
+    /*
+     * update the publicize connections for the passed site
+     */
+    public static void updateConnectionsForSite(Context context, int siteId) {
         Intent intent = new Intent(context, PublicizeUpdateService.class);
-        context.startService(intent);
-    }
-
-    public static void updateConnectionsForBlog(Context context, int remoteBlogId) {
-        Intent intent = new Intent(context, PublicizeUpdateService.class);
-        intent.putExtra(ARG_REMOTE_BLOG_ID, remoteBlogId);
+        intent.putExtra(ARG_SITE_ID, siteId);
         context.startService(intent);
     }
 
@@ -45,12 +44,12 @@ public class PublicizeUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        AppLog.i(AppLog.T.SHARING, "publicize update service > created");
+        AppLog.i(AppLog.T.SHARING, "publicize service > created");
     }
 
     @Override
     public void onDestroy() {
-        AppLog.i(AppLog.T.SHARING, "publicize update service > destroyed");
+        AppLog.i(AppLog.T.SHARING, "publicize service > destroyed");
         super.onDestroy();
     }
 
@@ -59,15 +58,16 @@ public class PublicizeUpdateService extends Service {
         if (intent == null) {
             return START_NOT_STICKY;
         }
-
-        // if a blogId is passed we're updating connections for that blog, otherwise we're updating
-        // the list of known publicize services
-        if (intent.hasExtra(ARG_REMOTE_BLOG_ID)) {
-            int remoteBlogId = intent.getIntExtra(ARG_REMOTE_BLOG_ID, 0);
-            updateConnections(remoteBlogId);
-        } else {
+        
+        // update list of services if we haven't done so yet
+        if (!mHasUpdatedServices || PublicizeTable.getNumServices() == 0) {
             updateServices();
+            AppLog.d(AppLog.T.SHARING, "publicize service > updating services");
+            mHasUpdatedServices = true;
         }
+
+        int siteId = intent.getIntExtra(ARG_SITE_ID, 0);
+        updateConnections(siteId);
 
         return START_NOT_STICKY;
     }
@@ -107,15 +107,15 @@ public class PublicizeUpdateService extends Service {
             }
         }.start();
     }
-
+    
     /*
      * update the connections for the passed blog
      */
-    private void updateConnections(final int remoteBlogId) {
+    private void updateConnections(final int siteId) {
         com.wordpress.rest.RestRequest.Listener listener = new RestRequest.Listener() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                handleUpdateConnectionsResponse(remoteBlogId, jsonObject);
+                handleUpdateConnectionsResponse(siteId, jsonObject);
             }
         };
         RestRequest.ErrorListener errorListener = new RestRequest.ErrorListener() {
@@ -125,20 +125,20 @@ public class PublicizeUpdateService extends Service {
             }
         };
 
-        String path = String.format("sites/%d/publicize-connections", remoteBlogId);
+        String path = String.format("sites/%d/publicize-connections", siteId);
         WordPress.getRestClientUtilsV1_1().get(path, null, null, listener, errorListener);
     }
 
-    private void handleUpdateConnectionsResponse(final int remoteBlogId, final JSONObject json) {
+    private void handleUpdateConnectionsResponse(final int siteId, final JSONObject json) {
         if (json == null) return;
 
         new Thread() {
             @Override
             public void run() {
                 PublicizeConnectionList serverList = PublicizeConnectionList.fromJson(json);
-                PublicizeConnectionList localList = PublicizeTable.getConnectionsForSite(remoteBlogId);
+                PublicizeConnectionList localList = PublicizeTable.getConnectionsForSite(siteId);
                 if (!serverList.isSameAs(localList)) {
-                    PublicizeTable.setConnectionsForSite(remoteBlogId, serverList);
+                    PublicizeTable.setConnectionsForSite(siteId, serverList);
                     EventBus.getDefault().post(new PublicizeEvents.PublicizeConnectionsChanged());
                 }
             }

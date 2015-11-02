@@ -12,19 +12,20 @@ import org.wordpress.android.ui.ActivityLauncher;
 import org.wordpress.android.ui.publicize.adapters.PublicizeServiceAdapter;
 import org.wordpress.android.ui.publicize.services.PublicizeUpdateService;
 import org.wordpress.android.ui.reader.PublicizeEvents;
+import org.wordpress.android.util.NetworkUtils;
 
 import de.greenrobot.event.EventBus;
 
 /**
- *
+ * Enables connecting/disconnecting a specific blog from various publicize services
  */
 public class PublicizeListActivity extends AppCompatActivity {
 
-    public static final String ARG_REMOTE_BLOG_ID = "blog_id";
+    public static final String ARG_SITE_ID = "site_id";
 
     private PublicizeServiceAdapter mAdapter;
     private RecyclerView mRecycler;
-    private int mRemoteBlogId;
+    private int mSiteId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,19 +42,18 @@ public class PublicizeListActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
-            mRemoteBlogId = getIntent().getIntExtra(ARG_REMOTE_BLOG_ID, 0);
+            mSiteId = getIntent().getIntExtra(ARG_SITE_ID, 0);
         } else {
-            mRemoteBlogId = savedInstanceState.getInt(ARG_REMOTE_BLOG_ID);
+            mSiteId = savedInstanceState.getInt(ARG_SITE_ID);
         }
 
         mRecycler = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new PublicizeServiceAdapter(this, mRemoteBlogId);
+        mAdapter = new PublicizeServiceAdapter(this, mSiteId);
         mRecycler.setAdapter(mAdapter);
         mAdapter.refresh();
 
-        if (savedInstanceState == null) {
-            PublicizeUpdateService.updatePublicizeServices(this);
-            PublicizeUpdateService.updateConnectionsForBlog(this, mRemoteBlogId);
+        if (savedInstanceState == null && NetworkUtils.isNetworkAvailable(this)) {
+            PublicizeUpdateService.updateConnectionsForSite(this, mSiteId);
         }
     }
 
@@ -77,7 +77,7 @@ public class PublicizeListActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(ARG_REMOTE_BLOG_ID, mRemoteBlogId);
+        outState.putInt(ARG_SITE_ID, mSiteId);
         super.onSaveInstanceState(outState);
     }
 

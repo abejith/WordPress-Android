@@ -192,7 +192,7 @@ public class ActivityLauncher {
         if (blog == null) return;
 
         Intent intent = new Intent(context, PublicizeListActivity.class);
-        intent.putExtra(PublicizeListActivity.ARG_REMOTE_BLOG_ID, blog.getRemoteBlogId());
+        intent.putExtra(PublicizeListActivity.ARG_SITE_ID, blog.getRemoteBlogId());
         slideInFromRight(context, intent);
     }
 

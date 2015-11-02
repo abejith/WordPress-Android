@@ -111,6 +111,10 @@ public class PublicizeTable {
         }
     }
 
+    public static long getNumServices() {
+        return SqlUtils.getRowCount(getReadableDb(), SERVICES_TABLE);
+    }
+
     public static PublicizeConnectionList getConnectionsForSite(int siteId) {
         ensureTablesExist();
 
