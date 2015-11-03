@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.wordpress.android.R;
 import org.wordpress.android.datasets.PublicizeTable;
+import org.wordpress.android.models.PublicizeConnection;
 import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeService;
 import org.wordpress.android.models.PublicizeServiceList;
@@ -73,9 +74,16 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
         String iconUrl = PhotonUtils.getPhotonImageUrl(service.getIconUrl(), mAvatarSz, mAvatarSz);
         holder.imgIcon.setImageUrl(iconUrl, WPNetworkImageView.ImageType.BLAVATAR);
 
-        // TODO: handle broken connections
-        boolean isConnected = mConnections.isServiceConnectedForCurrentUser(service);
-        holder.btnConnect.setConnectAction(isConnected ? ConnectAction.DISCONNECT : ConnectAction.CONNECT);
+        ConnectAction action;
+        PublicizeConnection connection = mConnections.getConnectionForService(service);
+        if (connection == null) {
+            action = ConnectAction.CONNECT;
+        } else if (connection.getStatusEnum() == PublicizeConnection.ConnectStatus.BROKEN) {
+            action = ConnectAction.RECONNECT;
+        } else {
+            action = ConnectAction.DISCONNECT;
+        }
+        holder.btnConnect.setConnectAction(action);
         holder.btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,8 +151,8 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             Collections.sort(mServices, new Comparator<PublicizeService>() {
                 @Override
                 public int compare(PublicizeService lhs, PublicizeService rhs) {
-                    boolean isLhsConnected = mConnections.isServiceConnectedForCurrentUser(lhs);
-                    boolean isRhsConnected = mConnections.isServiceConnectedForCurrentUser(rhs);
+                    boolean isLhsConnected = mConnections.isServiceConnected(lhs);
+                    boolean isRhsConnected = mConnections.isServiceConnected(rhs);
                     if (isLhsConnected && !isRhsConnected) {
                         return -1;
                     } else if (isRhsConnected && !isLhsConnected) {
