@@ -89,6 +89,8 @@ public class PublicizeUpdateService extends Service {
             }
         };
 
+        // TODO: switch to /meta/external-services once it includes the service icon url - note
+        // that we must ignore services whose "type" is other than "publicize"
         String path = "/meta/publicize";
         WordPress.getRestClientUtilsV1_1().get(path, null, null, listener, errorListener);
     }
