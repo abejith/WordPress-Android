@@ -13,13 +13,13 @@ import org.wordpress.android.models.PublicizeService;
 import org.wordpress.android.models.PublicizeServiceList;
 
 public class PublicizeTable {
-    private static final String SERVICES_TABLE = "tbl_publicize_services";
+    private static final String SERVICES_TABLE    = "tbl_publicize_services";
     private static final String CONNECTIONS_TABLE = "tbl_publicize_connections";
 
     private static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
                 + " name            TEXT NOT NULL COLLATE NOCASE,"
-                + " label           TEXT NOT NULL,"
+                + " label           TEXT NOT NULL COLLATE NOCASE,"
                 + " description     TEXT NOT NULL,"
                 + "	noticon		    TEXT NOT NULL,"
                 + " icon_url        TEXT NOT NULL,"
@@ -34,7 +34,7 @@ public class PublicizeTable {
                 + " keyring_connection_user_id  INTEGER DEFAULT 0,"
                 + " is_shared                   INTEGER DEFAULT 0,"
                 + " service                     TEXT NOT NULL COLLATE NOCASE,"
-                + " label                       TEXT NOT NULL,"
+                + " label                       TEXT NOT NULL COLLATE NOCASE,"
                 + " external_name               TEXT NOT NULL,"
                 + " external_display            TEXT NOT NULL,"
                 + " external_profile_picture    TEXT NOT NULL,"

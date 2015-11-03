@@ -89,7 +89,8 @@ public class PublicizeUpdateService extends Service {
             }
         };
 
-        WordPress.getRestClientUtilsV1_1().get("meta/publicize/", null, null, listener, errorListener);
+        String path = "/meta/publicize";
+        WordPress.getRestClientUtilsV1_1().get(path, null, null, listener, errorListener);
     }
 
     private void handleUpdateServicesResponse(final JSONObject json) {

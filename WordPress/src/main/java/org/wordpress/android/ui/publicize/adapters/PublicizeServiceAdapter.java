@@ -17,6 +17,7 @@ import org.wordpress.android.ui.publicize.ConnectButton;
 import org.wordpress.android.ui.publicize.ConnectButton.ConnectAction;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
+import org.wordpress.android.util.PhotonUtils;
 import org.wordpress.android.widgets.WPNetworkImageView;
 
 import java.util.Collections;
@@ -26,10 +27,12 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
     private final PublicizeServiceList mServices = new PublicizeServiceList();
     private final PublicizeConnectionList mConnections = new PublicizeConnectionList();
     private final int mSiteId;
+    private final int mAvatarSz;
 
     public PublicizeServiceAdapter(Context context, int siteId) {
         super();
         mSiteId = siteId;
+        mAvatarSz = context.getResources().getDimensionPixelSize(R.dimen.avatar_sz_medium);
         setHasStableIds(true);
     }
 
@@ -67,7 +70,8 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
 
         holder.txtLabel.setText(service.getLabel());
         holder.txtDescription.setText(service.getDescription());
-        holder.imgIcon.setImageUrl(service.getIconUrl(), WPNetworkImageView.ImageType.BLAVATAR);
+        String iconUrl = PhotonUtils.getPhotonImageUrl(service.getIconUrl(), mAvatarSz, mAvatarSz);
+        holder.imgIcon.setImageUrl(iconUrl, WPNetworkImageView.ImageType.BLAVATAR);
 
         // TODO: handle broken connections
         boolean isConnected = mConnections.isServiceConnectedForCurrentUser(service);

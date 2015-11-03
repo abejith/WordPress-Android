@@ -102,6 +102,7 @@ public class PublicizeConnection {
     }
 
     /*
+     * passed JSON is a single connection from the response to sites/%d/publicize-connections
        {"ID":12783250,
         "site_ID":52451176,
         "user_ID":5399133,

@@ -53,11 +53,12 @@ public class PublicizeConnectionList extends ArrayList<PublicizeConnection> {
     }
 
     /*
-    {"connections":[
-       {"ID":12783250,
-        "site_ID":52451176,
-        "user_ID":5399133,
-        ...
+     * passed JSON is the response from sites/%d/publicize-connections
+     *   {"connections":[
+     *      {"ID":12783250,
+     *       "site_ID":52451176,
+     *       "user_ID":5399133,
+     *       ...
      */
     public static PublicizeConnectionList fromJson(JSONObject json) {
         PublicizeConnectionList connectionList = new PublicizeConnectionList();

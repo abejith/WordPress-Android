@@ -37,16 +37,17 @@ public class PublicizeServiceList extends ArrayList<PublicizeService> {
     }
 
     /*
-    "services": {
-		"facebook": {
-			"label": "Facebook",
-			"description": "Publish your posts to your Facebook wall or page.",
-			"noticon": "noticon-facebook-alt",
-			"icon": "http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-fb-2x.png",
-			"screenshots": [],
-			"connect": "https://public-api.wordpress.com/connect/?action=request&kr_nonce=eb5ccc2500&nonce=a4f35f026e&for=connect&service=facebook&blog=5836086&kr_blog_nonce=7160750c45&magic=keyring"
-		},
-		...
+     * passed JSON is the response from /meta/publicize
+        "services": {
+            "facebook": {
+                "label": "Facebook",
+                "description": "Publish your posts to your Facebook wall or page.",
+                "noticon": "noticon-facebook-alt",
+                "icon": "http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-fb-2x.png",
+                "screenshots": [],
+                "connect": "https://public-api.wordpress.com/connect/?action=request&kr_nonce=eb5ccc2500&nonce=a4f35f026e&for=connect&service=facebook&blog=5836086&kr_blog_nonce=7160750c45&magic=keyring"
+            },
+            ...
      */
     public static PublicizeServiceList fromJson(JSONObject json) {
         PublicizeServiceList serviceList = new PublicizeServiceList();
