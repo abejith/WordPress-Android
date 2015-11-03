@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import org.wordpress.android.R;
 import org.wordpress.android.datasets.PublicizeTable;
-import org.wordpress.android.models.PublicizeConnection;
 import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeService;
 import org.wordpress.android.models.PublicizeServiceList;
 import org.wordpress.android.ui.publicize.ConnectButton;
+import org.wordpress.android.ui.publicize.ConnectButton.ConnectAction;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.widgets.WPNetworkImageView;
@@ -69,22 +69,15 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
         holder.txtDescription.setText(service.getDescription());
         holder.imgIcon.setImageUrl(service.getIconUrl(), WPNetworkImageView.ImageType.BLAVATAR);
 
-        holder.btnConnect.setConnectState(isServiceConnected(service) ? ConnectButton.ConnectState.DISCONNECT : ConnectButton.ConnectState.CONNECT);
+        // TODO: handle broken connections
+        boolean isConnected = mConnections.isServiceConnectedForCurrentUser(service);
+        holder.btnConnect.setConnectAction(isConnected ? ConnectAction.DISCONNECT : ConnectAction.CONNECT);
         holder.btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO
             }
         });
-    }
-
-    private boolean isServiceConnected(PublicizeService service) {
-        for (PublicizeConnection connection: mConnections) {
-            if (connection.getService().equalsIgnoreCase(service.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     class SharingViewHolder extends RecyclerView.ViewHolder {
@@ -146,8 +139,8 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             Collections.sort(mServices, new Comparator<PublicizeService>() {
                 @Override
                 public int compare(PublicizeService lhs, PublicizeService rhs) {
-                    boolean isLhsConnected = isServiceConnected(lhs);
-                    boolean isRhsConnected = isServiceConnected(rhs);
+                    boolean isLhsConnected = mConnections.isServiceConnectedForCurrentUser(lhs);
+                    boolean isRhsConnected = mConnections.isServiceConnectedForCurrentUser(rhs);
                     if (isLhsConnected && !isRhsConnected) {
                         return -1;
                     } else if (isRhsConnected && !isLhsConnected) {

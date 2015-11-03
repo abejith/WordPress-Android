@@ -23,13 +23,13 @@ import java.util.Arrays;
  */
 public class ConnectButton extends WPTextView {
 
-    public enum ConnectState {
+    public enum ConnectAction {
         CONNECT,
         DISCONNECT,
         RECONNECT
     }
 
-    private ConnectState mConnectState = ConnectState.CONNECT;
+    private ConnectAction mConnectAction = ConnectAction.CONNECT;
     private int mPaddingHorz;
     private int mPaddingVert;
 
@@ -65,7 +65,7 @@ public class ConnectButton extends WPTextView {
         int textColorResId;
         int captionResId;
 
-        switch (mConnectState) {
+        switch (mConnectAction) {
             case CONNECT:
                 normalColorResId = R.color.blue_medium;
                 pressedColorResId = R.color.blue_light;
@@ -130,13 +130,13 @@ public class ConnectButton extends WPTextView {
         return states;
     }
 
-    public ConnectState getConnectState() {
-        return mConnectState;
+    public ConnectAction getConnectState() {
+        return mConnectAction;
     }
 
-    public void setConnectState(ConnectState newState) {
-        if (newState != null && !newState.equals(mConnectState)) {
-            mConnectState = newState;
+    public void setConnectAction(ConnectAction newAction) {
+        if (newAction != null && !newAction.equals(mConnectAction)) {
+            mConnectAction = newAction;
             updateView();
         }
     }

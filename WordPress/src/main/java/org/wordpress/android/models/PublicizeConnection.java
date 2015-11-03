@@ -6,12 +6,17 @@ import org.wordpress.android.util.StringUtils;
 
 public class PublicizeConnection {
 
+    public enum ConnectStatus { OK, BROKEN }
+
     public int connectionId;
     public int siteId;
-    public int userId;
     public int keyringConnectionId;
     public int keyringConnectionUserId;
 
+    // `user_id` is the ID of the user that the connection belongs to, it will be `0` when `shared`
+    // is `true`. only connections belonging to the current user and shared connections should be
+    // available to a user
+    public int userId;
     public boolean isShared;
 
     private String mService;
@@ -19,8 +24,10 @@ public class PublicizeConnection {
     private String mExternalName;
     private String mExternalDisplay;
     private String mExternalProfilePictureUrl;
-    private String mRefreshUrl;
+
+    // `status` can be `ok` or `broken` -- `broken` means the connection needs to be re-established via the `refresh_URL`
     private String mStatus;
+    private String mRefreshUrl;
 
     public String getService() {
         return StringUtils.notNullStr(mService);
@@ -69,6 +76,13 @@ public class PublicizeConnection {
     }
     public void setStatus(String status) {
         this.mStatus = StringUtils.notNullStr(status);
+    }
+    public ConnectStatus getStatusEnum() {
+        if (getStatus().equalsIgnoreCase("broken")) {
+            return ConnectStatus.BROKEN;
+        } else {
+            return ConnectStatus.OK;
+        }
     }
 
     public boolean isSameAs(PublicizeConnection other) {

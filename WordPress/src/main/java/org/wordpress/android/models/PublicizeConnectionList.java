@@ -36,6 +36,22 @@ public class PublicizeConnectionList extends ArrayList<PublicizeConnection> {
         return true;
     }
 
+    public boolean isServiceConnectedForCurrentUser(PublicizeService service) {
+        if (service == null) return false;
+
+        long currentUserId = AccountHelper.getDefaultAccount().getUserId();
+        for (PublicizeConnection connection: this) {
+            if (connection.getService().equalsIgnoreCase(service.getName())) {
+                // shared connections are available to all users, otherwise the service userId
+                // must match the current userId to be considered connected
+                if (connection.isShared || connection.userId == currentUserId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /*
     {"connections":[
        {"ID":12783250,
