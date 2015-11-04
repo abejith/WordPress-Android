@@ -12,7 +12,9 @@ import org.wordpress.android.ui.ActivityLauncher;
 import org.wordpress.android.ui.publicize.adapters.PublicizeServiceAdapter;
 import org.wordpress.android.ui.publicize.services.PublicizeUpdateService;
 import org.wordpress.android.ui.reader.PublicizeEvents;
+import org.wordpress.android.util.DisplayUtils;
 import org.wordpress.android.util.NetworkUtils;
+import org.wordpress.android.widgets.RecyclerItemDecoration;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,6 +50,10 @@ public class PublicizeListActivity extends AppCompatActivity {
         }
 
         mRecycler = (RecyclerView) findViewById(R.id.recycler_view);
+        int spacingHorizontal = 0;
+        int spacingVertical = DisplayUtils.dpToPx(this, 1);
+        mRecycler.addItemDecoration(new RecyclerItemDecoration(spacingHorizontal, spacingVertical));
+
         mAdapter = new PublicizeServiceAdapter(this, mSiteId);
         mRecycler.setAdapter(mAdapter);
         mAdapter.refresh();

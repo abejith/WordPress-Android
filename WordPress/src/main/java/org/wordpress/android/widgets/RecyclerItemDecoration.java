@@ -5,7 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * simple implementation of RecyclerView dividers
+ * simple implementation of RecyclerView dividers - note that the divider color will be that
+ * of the recycler (or the activity if the recyler has no background), so the recycler's
+ * items should have a background color that's different from that of the recycler/activity
  */
 public class RecyclerItemDecoration extends RecyclerView.ItemDecoration {
     private final int mSpacingHorizontal;

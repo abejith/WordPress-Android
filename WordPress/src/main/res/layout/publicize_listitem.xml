@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:layout_marginLeft="@dimen/content_margin"
+    android:layout_marginRight="@dimen/content_margin"
+    android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/margin_large"
     android:paddingLeft="@dimen/margin_extra_large"
     android:paddingRight="@dimen/margin_extra_large"
-    android:paddingTop="@dimen/margin_large"
-    tools:background="@color/white">
+    android:paddingTop="@dimen/margin_large">
 
     <org.wordpress.android.widgets.WPNetworkImageView
         android:id="@+id/image_icon"
@@ -38,10 +41,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_large"
         android:layout_marginRight="@dimen/margin_large"
-        android:ellipsize="end"
-        android:maxLines="1"
         android:layout_weight="1"
+        android:ellipsize="end"
         android:gravity="right|center_vertical"
+        android:maxLines="1"
         android:textColor="@color/grey_darken_10"
         android:textSize="@dimen/text_sz_medium"
         tools:text="text_user" />
