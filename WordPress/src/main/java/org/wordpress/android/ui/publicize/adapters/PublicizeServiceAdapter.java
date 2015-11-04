@@ -56,7 +56,7 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
 
     @Override
     public long getItemId(int position) {
-        return mServices.get(position).getName().hashCode();
+        return mServices.get(position).getId().hashCode();
     }
 
     @Override

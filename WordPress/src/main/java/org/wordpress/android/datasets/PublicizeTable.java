@@ -4,13 +4,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import com.automattic.android.tracks.datasets.SqlUtils;
-
 import org.wordpress.android.WordPress;
 import org.wordpress.android.models.PublicizeConnection;
 import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeService;
 import org.wordpress.android.models.PublicizeServiceList;
+import org.wordpress.android.util.SqlUtils;
 
 public class PublicizeTable {
     private static final String SERVICES_TABLE    = "tbl_publicize_services";
@@ -18,13 +17,15 @@ public class PublicizeTable {
 
     private static void createTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SERVICES_TABLE + " ("
-                + " name            TEXT NOT NULL COLLATE NOCASE,"
-                + " label           TEXT NOT NULL COLLATE NOCASE,"
-                + " description     TEXT NOT NULL,"
-                + "	noticon		    TEXT NOT NULL,"
-                + " icon_url        TEXT NOT NULL,"
-                + "	connect_url	    TEXT NOT NULL,"
-                + " PRIMARY KEY (name))");
+                + " id                          TEXT NOT NULL COLLATE NOCASE,"
+                + " label                       TEXT NOT NULL COLLATE NOCASE,"
+                + " description                 TEXT NOT NULL,"
+                + "	genericon	                TEXT NOT NULL,"
+                + " icon_url                    TEXT NOT NULL,"
+                + "	connect_url	                TEXT NOT NULL,"
+                + " is_jetpack_supported        INTEGER DEFAULT 0,"
+                + " is_multi_user_id_supported  INTEGER DEFAULT 0,"
+                + " PRIMARY KEY (id))");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CONNECTIONS_TABLE + " ("
                 + " id                          INTEGER DEFAULT 0,"
@@ -51,6 +52,15 @@ public class PublicizeTable {
         return WordPress.wpDB.getDatabase();
     }
 
+    /*
+     * for testing purposes - clears then recreates tables
+     */
+    public static void reset() {
+        getWritableDb().execSQL("DROP TABLE IF EXISTS " + SERVICES_TABLE);
+        getWritableDb().execSQL("DROP TABLE IF EXISTS " + CONNECTIONS_TABLE);
+        createTables(getWritableDb());
+    }
+
     private static boolean mCreatedTables;
     private static void ensureTablesExist() {
         if (!mCreatedTables) {
@@ -63,16 +73,18 @@ public class PublicizeTable {
         ensureTablesExist();
 
         PublicizeServiceList serviceList = new PublicizeServiceList();
-        Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY name", null);
+        Cursor c = getReadableDb().rawQuery("SELECT * FROM " + SERVICES_TABLE + " ORDER BY label", null);
         try {
             while (c.moveToNext()) {
                 PublicizeService service = new PublicizeService();
-                service.setName(c.getString(c.getColumnIndex("name")));
+                service.setId(c.getString(c.getColumnIndex("id")));
                 service.setLabel(c.getString(c.getColumnIndex("label")));
                 service.setDescription(c.getString(c.getColumnIndex("description")));
-                service.setNoticon(c.getString(c.getColumnIndex("noticon")));
+                service.setGenericon(c.getString(c.getColumnIndex("genericon")));
                 service.setIconUrl(c.getString(c.getColumnIndex("icon_url")));
                 service.setConnectUrl(c.getString(c.getColumnIndex("connect_url")));
+                service.setIsJetpackSupported(SqlUtils.sqlToBool(c.getColumnIndex("is_jetpack_supported")));
+                service.setIsMultiExternalUserIdSupported(SqlUtils.sqlToBool(c.getColumnIndex("is_multi_user_id_supported")));
                 serviceList.add(service);
             }
             return serviceList;
@@ -92,15 +104,24 @@ public class PublicizeTable {
 
             stmt = db.compileStatement(
                     "INSERT INTO " + SERVICES_TABLE
-                    + " (name, label, description, noticon, icon_url, connect_url)"
-                    + " VALUES (?1, ?2, ?3, ?4, ?5, ?6)");
+                    + " (id,"                           // 1
+                    + " label,"                         // 2
+                    + " description,"                   // 3
+                    + " genericon,"                     // 4
+                    + " icon_url,"                      // 5
+                    + " connect_url,"                   // 6
+                    + " is_jetpack_supported,"          // 7
+                    + " is_multi_user_id_supported)"    // 8
+                    + " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)");
             for (PublicizeService service : serviceList) {
-                stmt.bindString(1, service.getName());
+                stmt.bindString(1, service.getId());
                 stmt.bindString(2, service.getLabel());
                 stmt.bindString(3, service.getDescription());
-                stmt.bindString(4, service.getNoticon());
+                stmt.bindString(4, service.getGenericon());
                 stmt.bindString(5, service.getIconUrl());
                 stmt.bindString(6, service.getConnectUrl());
+                stmt.bindLong(7, SqlUtils.boolToSql(service.isJetpackSupported()));
+                stmt.bindLong  (8, SqlUtils.boolToSql(service.isMultiExternalUserIdSupported()));
                 stmt.executeInsert();
             }
 

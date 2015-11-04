@@ -19,7 +19,7 @@ import org.wordpress.android.util.AppLog;
 import de.greenrobot.event.EventBus;
 
 /**
- * service which requests the user's available sharing services
+ * service which requests the user's available sharing services and publicize connections
  */
 
 public class PublicizeUpdateService extends Service {
@@ -89,9 +89,7 @@ public class PublicizeUpdateService extends Service {
             }
         };
 
-        // TODO: switch to /meta/external-services once it includes the service icon url - note
-        // that we must ignore services whose "type" is other than "publicize"
-        String path = "/meta/publicize";
+        String path = "/meta/external-services?type=publicize";
         WordPress.getRestClientUtilsV1_1().get(path, null, null, listener, errorListener);
     }
 

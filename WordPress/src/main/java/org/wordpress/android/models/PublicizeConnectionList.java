@@ -41,7 +41,7 @@ public class PublicizeConnectionList extends ArrayList<PublicizeConnection> {
 
         long currentUserId = AccountHelper.getDefaultAccount().getUserId();
         for (PublicizeConnection connection: this) {
-            if (connection.getService().equalsIgnoreCase(service.getName())) {
+            if (connection.getService().equalsIgnoreCase(service.getId())) {
                 // shared connections are available to all users, otherwise the service userId
                 // must match the current userId to be considered connected
                 if (connection.isShared || connection.userId == currentUserId) {

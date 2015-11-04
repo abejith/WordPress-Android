@@ -37,16 +37,23 @@ public class PublicizeServiceList extends ArrayList<PublicizeService> {
     }
 
     /*
-     * passed JSON is the response from /meta/publicize
-        "services": {
-            "facebook": {
-                "label": "Facebook",
-                "description": "Publish your posts to your Facebook wall or page.",
-                "noticon": "noticon-facebook-alt",
-                "icon": "http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-fb-2x.png",
-                "screenshots": [],
-                "connect": "https://public-api.wordpress.com/connect/?action=request&kr_nonce=eb5ccc2500&nonce=a4f35f026e&for=connect&service=facebook&blog=5836086&kr_blog_nonce=7160750c45&magic=keyring"
-            },
+     * passed JSON is the response from /meta/external-services?type=publicize
+         "services": {
+                "facebook": {
+                    "ID": "facebook",
+                    "label": "Facebook",
+                    "type": "publicize",
+                    "description": "Publish your posts to your Facebook timeline or page.",
+                    "genericon": {
+                        "class": "facebook-alt",
+                        "unicode": "\\f203"
+                    },
+                    "icon": "http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-fb-2x.png",
+                    "connect_URL": "https://public-api.wordpress.com/connect/?action=request&kr_nonce=b2c86a0cdb&nonce=94557d1529&for=connect&service=facebook&kr_blog_nonce=5e399375f1&magic=keyring&blog=52451191",
+                    "multiple_external_user_ID_support": true,
+                    "jetpack_support": true,
+                    "jetpack_module_required": "publicize"
+                },
             ...
      */
     public static PublicizeServiceList fromJson(JSONObject json) {
@@ -62,13 +69,20 @@ public class PublicizeServiceList extends ArrayList<PublicizeService> {
             JSONObject jsonService = jsonServiceList.optJSONObject(serviceName);
 
             PublicizeService service = new PublicizeService();
-            service.setName(serviceName);
+            service.setId(jsonService.optString("ID"));
             service.setLabel(jsonService.optString("label"));
             service.setDescription(jsonService.optString("description"));
-            service.setNoticon(jsonService.optString("noticon"));
             service.setIconUrl(jsonService.optString("icon"));
-            service.setConnectUrl(jsonService.optString("connect"));
-            serviceList.add(service);
+            service.setConnectUrl(jsonService.optString("connect_URL"));
+
+            service.setIsJetpackSupported(jsonService.optBoolean("jetpack_support"));
+            service.setIsMultiExternalUserIdSupported(jsonService.optBoolean("multiple_external_user_ID_support"));
+
+            JSONObject jsonGenericon = jsonService.optJSONObject("genericon");
+            if (jsonGenericon != null) {
+                service.setGenericon(jsonGenericon.optString("unicode"));
+            }
+                    serviceList.add(service);
         }
 
         return serviceList;
