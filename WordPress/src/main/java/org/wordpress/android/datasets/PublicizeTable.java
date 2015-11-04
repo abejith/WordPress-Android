@@ -120,7 +120,7 @@ public class PublicizeTable {
                 stmt.bindString(4, service.getGenericon());
                 stmt.bindString(5, service.getIconUrl());
                 stmt.bindString(6, service.getConnectUrl());
-                stmt.bindLong(7, SqlUtils.boolToSql(service.isJetpackSupported()));
+                stmt.bindLong  (7, SqlUtils.boolToSql(service.isJetpackSupported()));
                 stmt.bindLong  (8, SqlUtils.boolToSql(service.isMultiExternalUserIdSupported()));
                 stmt.executeInsert();
             }
