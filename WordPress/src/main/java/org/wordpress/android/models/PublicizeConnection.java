@@ -1,5 +1,7 @@
 package org.wordpress.android.models;
 
+import android.text.TextUtils;
+
 import org.json.JSONObject;
 import org.wordpress.android.util.JSONUtils;
 import org.wordpress.android.util.StringUtils;
@@ -22,7 +24,7 @@ public class PublicizeConnection {
     private String mService;
     private String mLabel;
     private String mExternalName;
-    private String mExternalDisplay;
+    private String mExternalDisplayName;
     private String mExternalProfilePictureUrl;
 
     // `status` can be `ok` or `broken` -- `broken` means the connection needs to be re-established via the `refresh_URL`
@@ -50,11 +52,14 @@ public class PublicizeConnection {
         this.mExternalName = StringUtils.notNullStr(name);
     }
 
-    public String getExternalDisplay() {
-        return StringUtils.notNullStr(mExternalDisplay);
+    public String getExternalDisplayName() {
+        return StringUtils.notNullStr(mExternalDisplayName);
     }
-    public void setExternalDisplay(String name) {
-        this.mExternalDisplay = StringUtils.notNullStr(name);
+    public void setExternalDisplayName(String name) {
+        this.mExternalDisplayName = StringUtils.notNullStr(name);
+    }
+    public boolean hasExternalDisplayName() {
+        return !TextUtils.isEmpty(mExternalDisplayName);
     }
 
     public String getRefreshUrl() {
@@ -93,7 +98,7 @@ public class PublicizeConnection {
                 && other.keyringConnectionUserId == this.keyringConnectionUserId
                 && other.isShared == this.isShared
                 && other.getStatus().equals(this.getStatus())
-                && other.getExternalDisplay().equals(this.getExternalDisplay())
+                && other.getExternalDisplayName().equals(this.getExternalDisplayName())
                 && other.getExternalName().equals(this.getExternalName())
                 && other.getLabel().equals(this.getLabel())
                 && other.getExternalProfilePictureUrl().equals(this.getExternalProfilePictureUrl())
@@ -144,7 +149,7 @@ public class PublicizeConnection {
         connection.mService = json.optString("service");
         connection.mLabel = json.optString("label");
         connection.mExternalName = json.optString("external_name");
-        connection.mExternalDisplay = json.optString("external_display");
+        connection.mExternalDisplayName = json.optString("external_display");
         connection.mExternalProfilePictureUrl = json.optString("external_profile_URL");
         connection.mStatus = json.optString("status");
 

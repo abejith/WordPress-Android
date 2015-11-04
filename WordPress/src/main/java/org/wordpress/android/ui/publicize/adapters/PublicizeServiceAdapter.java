@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.wordpress.android.R;
 import org.wordpress.android.datasets.PublicizeTable;
+import org.wordpress.android.models.AccountHelper;
 import org.wordpress.android.models.PublicizeConnection;
 import org.wordpress.android.models.PublicizeConnectionList;
 import org.wordpress.android.models.PublicizeService;
@@ -29,11 +30,13 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
     private final PublicizeConnectionList mConnections = new PublicizeConnectionList();
     private final int mSiteId;
     private final int mAvatarSz;
+    private final long mCurrentUserId;
 
     public PublicizeServiceAdapter(Context context, int siteId) {
         super();
         mSiteId = siteId;
-        mAvatarSz = context.getResources().getDimensionPixelSize(R.dimen.avatar_sz_medium);
+        mAvatarSz = context.getResources().getDimensionPixelSize(R.dimen.avatar_sz_extra_small);
+        mCurrentUserId = AccountHelper.getDefaultAccount().getUserId();
         setHasStableIds(true);
     }
 
@@ -68,14 +71,20 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
     @Override
     public void onBindViewHolder(SharingViewHolder holder, int position) {
         final PublicizeService service = mServices.get(position);
+        final PublicizeConnection connection = mConnections.getServiceConnectionForUser(mCurrentUserId, service);
 
-        holder.txtLabel.setText(service.getLabel());
-        holder.txtDescription.setText(service.getDescription());
         String iconUrl = PhotonUtils.getPhotonImageUrl(service.getIconUrl(), mAvatarSz, mAvatarSz);
         holder.imgIcon.setImageUrl(iconUrl, WPNetworkImageView.ImageType.BLAVATAR);
 
-        ConnectAction action;
-        PublicizeConnection connection = mConnections.getConnectionForService(service);
+        holder.txtConnection.setText(service.getLabel());
+        if (connection != null && connection.hasExternalDisplayName()) {
+            holder.txtUser.setText(connection.getExternalDisplayName());
+            holder.txtUser.setVisibility(View.VISIBLE);
+        } else {
+            holder.txtUser.setVisibility(View.GONE);
+        }
+
+        ConnectAction action = ConnectAction.CONNECT;
         if (connection == null) {
             action = ConnectAction.CONNECT;
         } else if (connection.getStatusEnum() == PublicizeConnection.ConnectStatus.BROKEN) {
@@ -93,15 +102,15 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
     }
 
     class SharingViewHolder extends RecyclerView.ViewHolder {
-        private final TextView txtLabel;
-        private final TextView txtDescription;
+        private final TextView txtConnection;
+        private final TextView txtUser;
         private final ConnectButton btnConnect;
         private final WPNetworkImageView imgIcon;
 
         public SharingViewHolder(View view) {
             super(view);
-            txtLabel = (TextView) view.findViewById(R.id.text_label);
-            txtDescription = (TextView) view.findViewById(R.id.text_description);
+            txtConnection = (TextView) view.findViewById(R.id.text_connection);
+            txtUser = (TextView) view.findViewById(R.id.text_user);
             btnConnect = (ConnectButton) view.findViewById(R.id.button_connect);
             imgIcon = (WPNetworkImageView) view.findViewById(R.id.image_icon);
         }
@@ -151,8 +160,8 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             Collections.sort(mServices, new Comparator<PublicizeService>() {
                 @Override
                 public int compare(PublicizeService lhs, PublicizeService rhs) {
-                    boolean isLhsConnected = mConnections.isServiceConnected(lhs);
-                    boolean isRhsConnected = mConnections.isServiceConnected(rhs);
+                    boolean isLhsConnected = mConnections.isServiceConnectedForUser(mCurrentUserId, lhs);
+                    boolean isRhsConnected = mConnections.isServiceConnectedForUser(mCurrentUserId, rhs);
                     if (isLhsConnected && !isRhsConnected) {
                         return -1;
                     } else if (isRhsConnected && !isLhsConnected) {

@@ -36,15 +36,14 @@ public class PublicizeConnectionList extends ArrayList<PublicizeConnection> {
         return true;
     }
 
-    public PublicizeConnection getConnectionForService(PublicizeService service) {
+    public PublicizeConnection getServiceConnectionForUser(long userId, PublicizeService service) {
         if (service == null) return null;
 
-        long currentUserId = AccountHelper.getDefaultAccount().getUserId();
         for (PublicizeConnection connection: this) {
             if (connection.getService().equalsIgnoreCase(service.getId())) {
                 // shared connections are available to all users, otherwise the service userId
                 // must match the current userId to be considered connected
-                if (connection.isShared || connection.userId == currentUserId) {
+                if (connection.isShared || connection.userId == userId) {
                     return connection;
                 }
             }
@@ -52,8 +51,17 @@ public class PublicizeConnectionList extends ArrayList<PublicizeConnection> {
         return null;
     }
 
-    public boolean isServiceConnected(PublicizeService service) {
-        return getConnectionForService(service) != null;
+    public boolean isServiceConnectedForUser(long userId, PublicizeService service) {
+        if (service == null) return false;
+
+        for (PublicizeConnection connection: this) {
+            if (connection.getService().equalsIgnoreCase(service.getId())) {
+                if (connection.isShared || connection.userId == userId) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /*

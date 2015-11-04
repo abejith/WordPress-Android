@@ -14,41 +14,37 @@
 
     <org.wordpress.android.widgets.WPNetworkImageView
         android:id="@+id/image_icon"
-        android:layout_width="@dimen/avatar_sz_medium"
-        android:layout_height="@dimen/avatar_sz_medium"
+        android:layout_width="@dimen/avatar_sz_extra_small"
+        android:layout_height="@dimen/avatar_sz_extra_small"
         android:layout_weight="0"
         tools:src="@drawable/blavatar_placeholder" />
 
-    <LinearLayout
+    <org.wordpress.android.widgets.WPTextView
+        android:id="@+id/text_connection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_large"
         android:layout_marginRight="@dimen/margin_large"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/grey_dark"
+        android:textSize="@dimen/text_sz_medium"
+        tools:text="text_connection" />
 
-        <org.wordpress.android.widgets.WPTextView
-            android:id="@+id/text_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/margin_medium"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/grey_dark"
-            android:textSize="@dimen/text_sz_medium"
-            tools:text="text_label" />
-
-        <org.wordpress.android.widgets.WPTextView
-            android:id="@+id/text_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/grey_darken_10"
-            android:textSize="@dimen/text_sz_small"
-            tools:text="text_description" />
-
-    </LinearLayout>
+    <org.wordpress.android.widgets.WPTextView
+        android:id="@+id/text_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_weight="1"
+        android:gravity="right|center_vertical"
+        android:textColor="@color/grey_darken_10"
+        android:textSize="@dimen/text_sz_medium"
+        tools:text="text_user" />
 
     <org.wordpress.android.ui.publicize.ConnectButton
         android:id="@+id/button_connect"

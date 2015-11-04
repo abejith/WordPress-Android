@@ -69,6 +69,22 @@ public class PublicizeTable {
         }
     }
 
+    /*
+     * purge table of connections to blogs that no longer exist
+     */
+    /*protected static int purge(SQLiteDatabase db) {
+        try {
+            int numDeleted = db.delete(CONNECTIONS_TABLE,
+                    "site_id NOT IN (SELECT DISTINCT blogId FROM " + WordPressDB.BLOGS_TABLE + ")", null);
+            if (numDeleted > 0) {
+                AppLog.i(AppLog.T.SHARING, "deleted " + numDeleted + " entries from publicize connections");
+            }
+            return numDeleted;
+        } catch (SQLiteException e) {
+            AppLog.e(AppLog.T.SHARING, e);
+        }
+    }*/
+
     public static PublicizeServiceList getServiceList() {
         ensureTablesExist();
 
@@ -157,7 +173,7 @@ public class PublicizeTable {
                 connection.setService(c.getString(c.getColumnIndex("service")));
                 connection.setLabel(c.getString(c.getColumnIndex("label")));
                 connection.setExternalName(c.getString(c.getColumnIndex("external_name")));
-                connection.setExternalDisplay(c.getString(c.getColumnIndex("external_display")));
+                connection.setExternalDisplayName(c.getString(c.getColumnIndex("external_display")));
                 connection.setExternalProfilePictureUrl(c.getString(c.getColumnIndex("external_profile_picture")));
                 connection.setRefreshUrl(c.getString(c.getColumnIndex("refresh_url")));
                 connection.setStatus(c.getString(c.getColumnIndex("status")));
@@ -207,7 +223,7 @@ public class PublicizeTable {
                 stmt.bindString(7, connection.getService());
                 stmt.bindString(8, connection.getLabel());
                 stmt.bindString(9, connection.getExternalName());
-                stmt.bindString(10, connection.getExternalDisplay());
+                stmt.bindString(10, connection.getExternalDisplayName());
                 stmt.bindString(11, connection.getExternalProfilePictureUrl());
                 stmt.bindString(12, connection.getRefreshUrl());
                 stmt.bindString(13, connection.getStatus());
