@@ -20,6 +20,7 @@ import org.wordpress.android.ui.publicize.ConnectButton.ConnectAction;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.util.PhotonUtils;
+import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.widgets.WPNetworkImageView;
 
 import java.util.Collections;
@@ -97,6 +98,7 @@ public class PublicizeServiceAdapter extends RecyclerView.Adapter<PublicizeServi
             @Override
             public void onClick(View v) {
                 // TODO
+                ToastUtils.showToast(v.getContext(), "not implemented yet");
             }
         });
     }

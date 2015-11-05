@@ -12,8 +12,10 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 
 import org.wordpress.android.R;
+import org.wordpress.android.util.DisplayUtils;
 import org.wordpress.android.widgets.WPTextView;
 
 import java.util.Arrays;
@@ -30,8 +32,6 @@ public class ConnectButton extends WPTextView {
     }
 
     private ConnectAction mConnectAction = ConnectAction.CONNECT;
-    private int mPaddingHorz;
-    private int mPaddingVert;
 
     public ConnectButton(Context context){
         super(context);
@@ -49,12 +49,18 @@ public class ConnectButton extends WPTextView {
     }
 
     private void initView(Context context) {
-        mPaddingHorz = context.getResources().getDimensionPixelSize(R.dimen.margin_large);
-        mPaddingVert = context.getResources().getDimensionPixelSize(R.dimen.margin_medium);
-        setAllCaps(true);
+        int paddingHorz = context.getResources().getDimensionPixelSize(R.dimen.margin_large);
+        int paddingVert = context.getResources().getDimensionPixelSize(R.dimen.margin_medium);
+        setPadding(paddingHorz, paddingVert, paddingHorz, paddingVert);
 
-        int sz = context.getResources().getDimensionPixelSize(R.dimen.text_sz_small);
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, sz);
+        int textSz = context.getResources().getDimensionPixelSize(R.dimen.text_sz_extra_small);
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSz);
+
+        int minWidth = DisplayUtils.dpToPx(context, 96);
+        setMinimumWidth(minWidth);
+
+        setAllCaps(true);
+        setGravity(Gravity.CENTER);
 
         updateView();
     }
@@ -102,9 +108,6 @@ public class ConnectButton extends WPTextView {
         setTextColor(textColor);
 
         setText(captionResId);
-
-        // specify padding here since setting the background removes it
-        setPadding(mPaddingHorz, mPaddingVert, mPaddingHorz, mPaddingVert);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -123,9 +126,9 @@ public class ConnectButton extends WPTextView {
 
     public static StateListDrawable getStateListDrawable(int normalColor, int pressedColor) {
         StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_pressed},   new ColorDrawable(pressedColor));
-        states.addState(new int[]{android.R.attr.state_focused},   new ColorDrawable(pressedColor));
-        states.addState(new int[]{android.R.attr.state_activated}, new ColorDrawable(pressedColor));
+        states.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(pressedColor));
+        states.addState(new int[]{android.R.attr.state_focused}, new ColorDrawable(pressedColor));
+        states.addState(new int[]{android.R.attr.state_activated},new ColorDrawable(pressedColor));
         states.addState(new int[]{}, new ColorDrawable(normalColor));
         return states;
     }
