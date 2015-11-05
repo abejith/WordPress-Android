@@ -155,6 +155,22 @@ public class WPWebViewActivity extends WebViewActivity {
         context.startActivity(intent);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState )
+    {
+        super.onSaveInstanceState(outState);
+        web.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        web.restoreState(savedInstanceState);
+    }
+
+
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,7 +209,8 @@ public class WPWebViewActivity extends WebViewActivity {
             finish();
         }
 
-        if (TextUtils.isEmpty(authURL) && TextUtils.isEmpty(username) && TextUtils.isEmpty(password)) {
+
+        if (TextUtils.isEmpty(authURL) && TextUtils.isEmpty(username) && TextUtils.isEmpty(password) && savedInstanceState == null ) {
             // Only the URL to load is passed to this activity. Use a the normal loader not authenticated.
             loadUrl(addressToLoad);
         } else {
