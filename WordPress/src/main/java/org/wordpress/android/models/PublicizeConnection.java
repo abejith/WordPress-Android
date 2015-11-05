@@ -23,6 +23,7 @@ public class PublicizeConnection {
 
     private String mService;
     private String mLabel;
+    private String mExternalId;
     private String mExternalName;
     private String mExternalDisplayName;
     private String mExternalProfilePictureUrl;
@@ -60,6 +61,13 @@ public class PublicizeConnection {
     }
     public boolean hasExternalDisplayName() {
         return !TextUtils.isEmpty(mExternalDisplayName);
+    }
+
+    public String getExternalId() {
+        return StringUtils.notNullStr(mExternalId);
+    }
+    public void setExternalId(String id) {
+        this.mExternalId = StringUtils.notNullStr(id);
     }
 
     public String getRefreshUrl() {
@@ -148,6 +156,7 @@ public class PublicizeConnection {
 
         connection.mService = json.optString("service");
         connection.mLabel = json.optString("label");
+        connection.mExternalId = json.optString("external_ID");
         connection.mExternalName = json.optString("external_name");
         connection.mExternalDisplayName = json.optString("external_display");
         connection.mExternalProfilePictureUrl = json.optString("external_profile_URL");

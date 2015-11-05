@@ -36,6 +36,7 @@ public class PublicizeTable {
                 + " is_shared                   INTEGER DEFAULT 0,"
                 + " service                     TEXT NOT NULL COLLATE NOCASE,"
                 + " label                       TEXT NOT NULL COLLATE NOCASE,"
+                + " external_id                 TEXT NOT NULL,"
                 + " external_name               TEXT NOT NULL,"
                 + " external_display            TEXT NOT NULL,"
                 + " external_profile_picture    TEXT NOT NULL,"
@@ -172,6 +173,7 @@ public class PublicizeTable {
 
                 connection.setService(c.getString(c.getColumnIndex("service")));
                 connection.setLabel(c.getString(c.getColumnIndex("label")));
+                connection.setExternalId(c.getString(c.getColumnIndex("external_id")));
                 connection.setExternalName(c.getString(c.getColumnIndex("external_name")));
                 connection.setExternalDisplayName(c.getString(c.getColumnIndex("external_display")));
                 connection.setExternalProfilePictureUrl(c.getString(c.getColumnIndex("external_profile_picture")));
@@ -205,12 +207,13 @@ public class PublicizeTable {
                             + " is_shared,"                     // 6
                             + " service,"                       // 7
                             + " label,"                         // 8
-                            + " external_name,"                 // 9
-                            + " external_display,"              // 10
-                            + " external_profile_picture,"      // 11
-                            + " refresh_url,"                   // 12
-                            + " status)"                        // 13
-                            + " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)");
+                            + " external_id,"                   // 9
+                            + " external_name,"                 // 10
+                            + " external_display,"              // 11
+                            + " external_profile_picture,"      // 12
+                            + " refresh_url,"                   // 13
+                            + " status)"                        // 14
+                            + " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)");
             for (PublicizeConnection connection : connectionList) {
                 stmt.bindLong(1, connection.connectionId);
                 stmt.bindLong(2, connection.siteId);
@@ -222,11 +225,12 @@ public class PublicizeTable {
 
                 stmt.bindString(7, connection.getService());
                 stmt.bindString(8, connection.getLabel());
-                stmt.bindString(9, connection.getExternalName());
-                stmt.bindString(10, connection.getExternalDisplayName());
-                stmt.bindString(11, connection.getExternalProfilePictureUrl());
-                stmt.bindString(12, connection.getRefreshUrl());
-                stmt.bindString(13, connection.getStatus());
+                stmt.bindString(9, connection.getExternalId());
+                stmt.bindString(10, connection.getExternalName());
+                stmt.bindString(11, connection.getExternalDisplayName());
+                stmt.bindString(12, connection.getExternalProfilePictureUrl());
+                stmt.bindString(13, connection.getRefreshUrl());
+                stmt.bindString(14, connection.getStatus());
 
                 stmt.executeInsert();
             }
